@@ -1,10 +1,15 @@
 package com.zhuweihao.servlets;
 
+import com.zhuweihao.dao.impl.FruitDAOImpl;
+import com.zhuweihao.pojo.Fruit;
+import com.zhuweihao.utils.JDBCUtils;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
 
 /**
  * @Author zhuweihao
@@ -26,5 +31,9 @@ public class AddServlet extends HttpServlet {
         System.out.println("price = " + price);
         System.out.println("fcount = " + fcount);
         System.out.println("remark = " + remark);
+
+        Connection connection = JDBCUtils.getConnection();
+        FruitDAOImpl fruitDAO = new FruitDAOImpl();
+        fruitDAO.insert(connection,new Fruit(0,fname,price,fcount,remark));
     }
 }
