@@ -117,8 +117,8 @@ public abstract class BaseDAO {
                     field.set(t, columnvalue);
                 }
                 list.add(t);
-                return list;
             }
+            return list;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

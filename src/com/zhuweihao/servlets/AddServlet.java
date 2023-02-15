@@ -5,9 +5,12 @@ import com.zhuweihao.pojo.Fruit;
 import com.zhuweihao.utils.JDBCUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.IOException;
 import java.sql.Connection;
 
@@ -22,6 +25,15 @@ import java.sql.Connection;
 public class AddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        //get方式目前不需要设置编码（基于tomcat8）,tomcat8之前get请求的中文数据，需要如下转码方式
+//        String fname = req.getParameter("fname");
+//        //1.将字符串打散成字节数据
+//        byte[] bytes = fname.getBytes("ISO-8859-1");
+//        fname = new String(bytes, "UTF-8");
+
+        //post方式下，需要设置编码，防止中文乱码
+        req.setCharacterEncoding("UTF-8");
+
         String fname = req.getParameter("fname");
         int price = Integer.parseInt(req.getParameter("price"));
         int fcount = Integer.parseInt(req.getParameter("fcount"));
@@ -34,6 +46,21 @@ public class AddServlet extends HttpServlet {
 
         Connection connection = JDBCUtils.getConnection();
         FruitDAOImpl fruitDAO = new FruitDAOImpl();
-        fruitDAO.insert(connection,new Fruit(0,fname,price,fcount,remark));
+        fruitDAO.insert(connection, new Fruit(0, fname, price, fcount, remark));
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+        System.out.println("正在服务");
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("正在销毁");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        System.out.println("正在初始化");
     }
 }

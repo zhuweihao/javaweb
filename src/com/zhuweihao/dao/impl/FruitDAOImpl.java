@@ -36,7 +36,8 @@ public class FruitDAOImpl extends BaseDAO implements FruitDAO {
 
     @Override
     public List<Fruit> getAll(Connection connection) {
-        return null;
+        String sql="select * from Fruit";
+        return getForList(connection,Fruit.class,sql);
     }
 
     @Override
