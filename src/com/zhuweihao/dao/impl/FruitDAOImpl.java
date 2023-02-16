@@ -15,33 +15,42 @@ import java.util.List;
 public class FruitDAOImpl extends BaseDAO implements FruitDAO {
     @Override
     public void insert(Connection connection, Fruit fruit) {
-        String sql="insert into Fruit(fname,price,fcount,remark)values(?,?,?,?)";
-        update(connection,sql,fruit.getFname(),fruit.getPrice(),fruit.getFcount(),fruit.getRemark());
+        String sql = "insert into Fruit(fname,price,fcount,remark)values(?,?,?,?)";
+        update(connection, sql, fruit.getFname(), fruit.getPrice(), fruit.getFcount(), fruit.getRemark());
     }
 
     @Override
     public void deleteById(Connection connection, int id) {
-
+        String sql = "delete from Fruit where fid = ?";
+        super.update(connection, sql, id);
     }
 
     @Override
     public void updataById(Connection connection, Fruit fruit) {
-
+        String sql = "update Fruit set fname = ? , price = ? , fcount = ? , remark = ? where fid = ?";
+        super.update(connection, sql, fruit.getFname(), fruit.getPrice(), fruit.getFcount(), fruit.getRemark(), fruit.getFid());
     }
 
     @Override
     public Fruit getFruitById(Connection connection, int id) {
-        return null;
+        String sql = "select * from Fruit where fid = ?";
+        return getInstance(connection, Fruit.class, sql, id);
     }
 
     @Override
     public List<Fruit> getAll(Connection connection) {
-        String sql="select * from Fruit";
-        return getForList(connection,Fruit.class,sql);
+        String sql = "select * from Fruit";
+        return getForList(connection, Fruit.class, sql);
     }
 
     @Override
     public Long getCount(Connection connection) {
         return null;
+    }
+
+    @Override
+    public List<Fruit> getFruitList(Connection connection, Integer page) {
+        String sql = "SELECT * FROM Fruit LIMIT ? , 5";
+        return super.getForList(connection, Fruit.class, sql, (page - 1) * 5);
     }
 }

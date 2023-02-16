@@ -7,6 +7,7 @@ import com.zhuweihao.utils.JDBCUtils;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import java.sql.Connection;
  * 2.调用DAO中的方法完成添加功能
  * 3.在控制台打印添加成功
  */
+@WebServlet("/add.do")
 public class AddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,20 +49,22 @@ public class AddServlet extends HttpServlet {
         Connection connection = JDBCUtils.getConnection();
         FruitDAOImpl fruitDAO = new FruitDAOImpl();
         fruitDAO.insert(connection, new Fruit(0, fname, price, fcount, remark));
+
+        resp.sendRedirect("index");
     }
 
-    @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-        System.out.println("正在服务");
-    }
-
-    @Override
-    public void destroy() {
-        System.out.println("正在销毁");
-    }
-
-    @Override
-    public void init() throws ServletException {
-        System.out.println("正在初始化");
-    }
+//    @Override
+//    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+//        System.out.println("正在服务");
+//    }
+//
+//    @Override
+//    public void destroy() {
+//        System.out.println("正在销毁");
+//    }
+//
+//    @Override
+//    public void init() throws ServletException {
+//        System.out.println("正在初始化");
+//    }
 }

@@ -3,6 +3,7 @@ package com.zhuweihao.servlets;
 import com.zhuweihao.dao.impl.FruitDAOImpl;
 import com.zhuweihao.pojo.Fruit;
 import com.zhuweihao.utils.JDBCUtils;
+import com.zhuweihao.utils.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,16 +23,29 @@ import java.util.List;
 //Servlet从3.0版本开始支持注解方式的注册
 @WebServlet("/index")
 public class IndexServlet extends ViewBaseServlet {
+
+    private FruitDAOImpl fruitDAO=new FruitDAOImpl();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("成功进入");
-        Connection connection = JDBCUtils.getConnection();
-        FruitDAOImpl fruitDAO = new FruitDAOImpl();
-        List<Fruit> fruitList = fruitDAO.getAll(connection);
-        //保存到session作用域
+        Integer page=1;
+        String pageStr = req.getParameter("page");
+        if(StringUtil.idNotEmpty(pageStr)){
+            page=Integer.parseInt(pageStr);
+        }
         HttpSession session = req.getSession();
-        session.setAttribute("fruitList",fruitList);
-
+        Connection connection = JDBCUtils.getConnection();
+        if(page<=1){
+            Integer integer=1;
+            List<Fruit> fruitList = fruitDAO.getFruitList(connection,integer);
+            //保存到session作用域
+            session.setAttribute("fruitList",fruitList);
+            session.setAttribute("page",integer);
+        }else {
+            List<Fruit> fruitList = fruitDAO.getFruitList(connection,page);
+            //保存到session作用域
+            session.setAttribute("fruitList",fruitList);
+            session.setAttribute("page",page);
+        }
         super.processTemplate("index",req,resp);
     }
 }

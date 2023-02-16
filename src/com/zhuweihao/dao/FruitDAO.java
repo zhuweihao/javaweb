@@ -54,5 +54,10 @@ public interface FruitDAO {
      */
     Long getCount(Connection connection);
 
-
+    /**
+     * 获取指定页码上的库存列表信息
+     * @param page
+     * @return
+     */
+    List<Fruit> getFruitList(Connection connection,Integer page);
 }
