@@ -32,8 +32,9 @@ public class DispatcherServlet extends ViewBaseServlet {
     private Map<String, Object> beanMap = new HashMap<>();
 
     public DispatcherServlet() {
-
     }
+
+    @Override
     public void init(){
         try {
             super.init();
@@ -58,10 +59,11 @@ public class DispatcherServlet extends ViewBaseServlet {
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException | ClassNotFoundException |
-                 InstantiationException | IllegalAccessException | ServletException e) {
+                InstantiationException | IllegalAccessException | ServletException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -92,7 +94,8 @@ public class DispatcherServlet extends ViewBaseServlet {
             Method[] declaredMethods = controller.getClass().getDeclaredMethods();
             for (Method method :
                     declaredMethods) {
-                if(declaredMethods.equals(operate)){
+                String name = method.getName();
+                if(name.equals(operate)){
                     //统一获取请求参数
                     Parameter[] parameters = method.getParameters();
 
