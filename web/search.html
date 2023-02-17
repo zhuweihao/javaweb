@@ -9,10 +9,6 @@
     <div id="div_fruit_list">
         <p class="center f30">欢迎使用水果库存后台管理系统</p>
         <div style="border: 0px solid red;width: 60%;margin-left: 20%;text-align: right;">
-            <form th:action="@{/fruit.do(operate='search')}" method="post" style="float: left;">
-                请输入库存名称：<input type="text" name="keyword">
-                <input type="submit" value="查询" class="btn">
-            </form>
             <a th:href="@{/add.html}" style="border: 0px solid blue;margin-bottom: 4px;">添加新库存</a>
         </div>
         <table id="tbl_fruit">
@@ -23,7 +19,7 @@
                 <th>操作</th>
             </tr>
             <tr th:if="${#lists.isEmpty(session.fruitList)}">
-                <td colspan="4">对不起，库存为空！</td>
+                <td colspan="4">对不起，库存不存在！</td>
             </tr>
             <tr th:unless="${#lists.isEmpty(session.fruitList)}" th:each="fruit : ${session.fruitList}">
                 <td><a th:text="${fruit.fname}" th:href="@{/fruit.do(fid=${fruit.fid},operate='edit')}">苹果</a></td>
@@ -32,12 +28,6 @@
                 <td><img src="img/del.jpg" class="delImg" th:onclick="|delFruit(${fruit.fid})|"/></td>
             </tr>
         </table>
-        <div style="border: 0px solid red;width: 60%;margin-left: 20%;padding-top: 4px;" class="center">
-            <input type="button" value="首 页" class="btn" th:onclick="|pageNo(1)|"/>
-            <input type="button" value="上一页" class="btn" th:onclick="|pageNo(${session.page}-1)|"/>
-            <input type="button" value="下一页" class="btn" th:onclick="|pageNo(${session.page}+1)|"/>
-            <input type="button" value="尾 页" class="btn" th:onclick="|pageNo(${session.pageCount})|"/>
-        </div>
     </div>
 </div>
 </body>

@@ -60,4 +60,12 @@ public interface FruitDAO {
      * @return
      */
     List<Fruit> getFruitList(Connection connection,Integer page);
+
+    /**
+     * 根据fname查询库存
+     * @param connection
+     * @param fname
+     * @return
+     */
+    List<Fruit> getFruitListByFname(Connection connection,String fname);
 }

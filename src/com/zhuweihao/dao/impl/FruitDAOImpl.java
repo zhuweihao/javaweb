@@ -45,12 +45,19 @@ public class FruitDAOImpl extends BaseDAO implements FruitDAO {
 
     @Override
     public Long getCount(Connection connection) {
-        return null;
+        String sql = "select count(*) from Fruit";
+        return super.getValue(connection, sql);
     }
 
     @Override
     public List<Fruit> getFruitList(Connection connection, Integer page) {
         String sql = "SELECT * FROM Fruit LIMIT ? , 5";
         return super.getForList(connection, Fruit.class, sql, (page - 1) * 5);
+    }
+
+    @Override
+    public List<Fruit> getFruitListByFname(Connection connection, String fname) {
+        String sql = "select * from Fruit where fname like ?";
+        return super.getForList(connection, Fruit.class, sql, "%" + fname + "%");
     }
 }

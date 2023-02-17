@@ -7,7 +7,7 @@
 <div id="div_container">
     <div id="div_fruit_list">
         <p class="center f30">欢迎使用水果库存后台管理系统</p>
-        <form th:action="@{/update.do}" method="post">
+        <form th:action="@{/fruit.do(operate='update')}" method="post">
             <input type="hidden" name="fid" th:value="${session.fruit.fid}">
             <table id="tbl_fruit">
                 <tr>

@@ -8,27 +8,27 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author zhuweihao
- * @Date 2023/2/16 16:36
+ * @Date 2023/2/17 10:47
  * @Description com.zhuweihao.servlets
  */
-@WebServlet("/update.do")
-public class UpdateServlet extends ViewBaseServlet {
+@WebServlet("/search.do")
+public class SearchServlet extends ViewBaseServlet {
     private FruitDAOImpl fruitDAO = new FruitDAOImpl();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");
-        String fname = req.getParameter("fname");
-        int price = Integer.parseInt(req.getParameter("price"));
-        String remark = req.getParameter("remark");
-        int fcount = Integer.parseInt(req.getParameter("fcount"));
-        int fid = Integer.parseInt(req.getParameter("fid"));
-        fruitDAO.updataById(JDBCUtils.getConnection(), new Fruit(fid, fname, price, fcount, remark));
-        //重定向，获取最新的库存信息
-        resp.sendRedirect("index");
+        String keyword = req.getParameter("keyword");
+        List<Fruit> fruitListByFname = fruitDAO.getFruitListByFname(JDBCUtils.getConnection(), keyword);
+        HttpSession session = req.getSession();
+        session.setAttribute("fruitList",fruitListByFname);
+
+        super.processTemplate("search",req,resp);
     }
 }
