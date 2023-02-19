@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <beans>
+<!--    <bean id="fruitDAO" class="com.zhuweihao.dao.impl.FruitDAOImpl"/>-->
+<!--    <bean-->
         <!--  这个bean标签的作用是将servletPath对应到相应的Controller  -->
     <bean id="fruit" class="com.zhuweihao.controllers.FruitController"/>
 </beans>

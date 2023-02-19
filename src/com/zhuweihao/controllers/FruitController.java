@@ -2,6 +2,8 @@ package com.zhuweihao.controllers;
 
 import com.zhuweihao.dao.impl.FruitDAOImpl;
 import com.zhuweihao.pojo.Fruit;
+import com.zhuweihao.service.FruitService;
+import com.zhuweihao.service.impl.FruitServiceImpl;
 import com.zhuweihao.utils.JDBCUtils;
 import com.zhuweihao.utils.StringUtil;
 
@@ -16,96 +18,77 @@ import java.util.List;
  * @Description com.zhuweihao.controllers
  */
 public class FruitController {
-    private FruitDAOImpl fruitDAO = new FruitDAOImpl();
+    private FruitService fruitService=new FruitServiceImpl();
 
 
-    private String index(HttpServletRequest req) {
+    private String index(HttpServletRequest req,Integer page) {
         //默认当前为第一页
-        Integer page = 1;
+        Integer pageNo = 1;
         //获取当前页
-        String pageStr = req.getParameter("page");
-        if (StringUtil.idNotEmpty(pageStr)) {
-            page = Integer.parseInt(pageStr);
+        if (page!=null) {
+            pageNo = page;
         }
         HttpSession session = req.getSession();
         Connection connection = JDBCUtils.getConnection();
         //获取总页数
-        Long fruitCount = fruitDAO.getCount(connection);
-        Long pageCount = (fruitCount + 5 - 1) / 5;
+        Integer pageCount = fruitService.getPageCount();
         session.setAttribute("pageCount", pageCount);
 
         //判断翻页逻辑
-        if (page <= 1) {
-            page = 1;
-            List<Fruit> fruitList = fruitDAO.getFruitList(connection, page);
+        if (pageNo <= 1) {
+            pageNo = 1;
+            List<Fruit> fruitList = fruitService.getFruitList(pageNo);
             //保存到session作用域
             session.setAttribute("fruitList", fruitList);
-            session.setAttribute("page", page);
-        } else if (page <= pageCount) {
-            List<Fruit> fruitList = fruitDAO.getFruitList(connection, page);
+            session.setAttribute("page", pageNo);
+        } else if (pageNo <= pageCount) {
+            List<Fruit> fruitList = fruitService.getFruitList(pageNo);
             //保存到session作用域
             session.setAttribute("fruitList", fruitList);
-            session.setAttribute("page", page);
+            session.setAttribute("page", pageNo);
         } else {
-            page = pageCount.intValue();
-            List<Fruit> fruitList = fruitDAO.getFruitList(connection, page);
+            pageNo = pageCount;
+            List<Fruit> fruitList = fruitService.getFruitList(pageNo);
             //保存到session作用域
             session.setAttribute("fruitList", fruitList);
-            session.setAttribute("page", page);
+            session.setAttribute("page", pageNo);
         }
         return "index";
     }
 
-    private String add(HttpServletRequest req) {
-        String fname = req.getParameter("fname");
-        int price = Integer.parseInt(req.getParameter("price"));
-        int fcount = Integer.parseInt(req.getParameter("fcount"));
-        String remark = req.getParameter("remark");
-
+    private String add(HttpServletRequest req,String fname,Integer price,Integer fcount,String remark) {
         Connection connection = JDBCUtils.getConnection();
-        FruitDAOImpl fruitDAO = new FruitDAOImpl();
-        fruitDAO.insert(connection, new Fruit(0, fname, price, fcount, remark));
+        fruitService.insert(new Fruit(0, fname, price, fcount, remark));
 
         return "redirect:fruit.do";
     }
 
-    private String del(HttpServletRequest req) {
-        String fidstr = req.getParameter("fid");
-        if (StringUtil.idNotEmpty(fidstr)) {
-            int fid = Integer.parseInt(fidstr);
-            fruitDAO.deleteById(JDBCUtils.getConnection(), fid);
+    private String del(Integer fid) {
+        if (fid!=null) {
+            fruitService.delFruit(fid);
             return "redirect:fruit.do";
         }
         return "error";
     }
 
-    private String update(HttpServletRequest req) {
-        String fname = req.getParameter("fname");
-        int price = Integer.parseInt(req.getParameter("price"));
-        String remark = req.getParameter("remark");
-        int fcount = Integer.parseInt(req.getParameter("fcount"));
-        int fid = Integer.parseInt(req.getParameter("fid"));
-        fruitDAO.updataById(JDBCUtils.getConnection(), new Fruit(fid, fname, price, fcount, remark));
+    private String update(Integer fid,String fname,Integer price,Integer fcount,String remark) {
+        fruitService.updateFruit(new Fruit(fid, fname, price, fcount, remark));
         //重定向，获取最新的库存信息
         return "redirect:fruit.do";
     }
 
-    private String search(HttpServletRequest req) {
-        String keyword = req.getParameter("keyword");
-        List<Fruit> fruitListByFname = fruitDAO.getFruitListByFname(JDBCUtils.getConnection(), keyword);
+    private String search(HttpServletRequest req,String keyword) {
+        List<Fruit> fruitListByFname = fruitService.getFruitListByFname(keyword);
         HttpSession session = req.getSession();
         session.setAttribute("fruitList", fruitListByFname);
 
         return "search";
     }
 
-    private String edit(HttpServletRequest req) {
-        String fidStr = req.getParameter("fid");
-        if (StringUtil.idNotEmpty(fidStr)) {
-            int fid = Integer.parseInt(fidStr);
+    private String edit(HttpServletRequest req ,Integer fid) {
+        if (fid!=null) {
             Connection connection = JDBCUtils.getConnection();
-            FruitDAOImpl fruitDAO = new FruitDAOImpl();
-            Fruit fruitById = fruitDAO.getFruitById(connection, fid);
+            Fruit fruitById = fruitService.getFruitByFid(fid);
             HttpSession session = req.getSession();
             session.setAttribute("fruit", fruitById);
             return "edit";

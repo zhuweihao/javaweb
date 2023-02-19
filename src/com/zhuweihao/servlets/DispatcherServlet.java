@@ -32,12 +32,7 @@ public class DispatcherServlet extends ViewBaseServlet {
     private Map<String, Object> beanMap = new HashMap<>();
 
     public DispatcherServlet() {
-    }
-
-    @Override
-    public void init(){
         try {
-            super.init();
             InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("applicationContext.xml");
             //创建DocumentBuilderFactory
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -59,11 +54,10 @@ public class DispatcherServlet extends ViewBaseServlet {
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException | ClassNotFoundException |
-                InstantiationException | IllegalAccessException | ServletException e) {
+                 InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
-
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -77,7 +71,6 @@ public class DispatcherServlet extends ViewBaseServlet {
         第二步：hello -> HelloController
          */
         String servletPath = req.getServletPath();
-        System.out.println("servletPath = " + servletPath);
 
         servletPath = servletPath.substring(1);
         int lastIndexOf = servletPath.lastIndexOf(".do");
@@ -95,23 +88,45 @@ public class DispatcherServlet extends ViewBaseServlet {
             for (Method method :
                     declaredMethods) {
                 String name = method.getName();
-                if(name.equals(operate)){
+                if (name.equals(operate)) {
                     //统一获取请求参数
                     Parameter[] parameters = method.getParameters();
 
+                    Object[] parameterValues = new Object[parameters.length];
+                    for (int i = 0; i < parameters.length; i++) {
+                        Parameter parameter = parameters[i];
+                        String parameterName = parameter.getName();
+                        if ("req".equals(parameterName)) {
+                            parameterValues[i] = req;
+                        } else if ("resp".equals(parameterName)) {
+                            parameterValues[i]=resp;
+                        } else if ("session".equals(parameterName)) {
+                            parameterValues[i]=req.getSession();
+                        }else {
+                            //从请求中获取参数值
+                            String parameterValue = req.getParameter(parameter.getName());
+                            String typeName = parameter.getType().getName();
+                            Object parameterObj=parameterValue;
+                            if(parameterObj!=null){
+                                if("java.lang.Integer".equals(typeName)){
+                                    parameterObj=Integer.parseInt(parameterValue);
+                                }
+                                //根据需要进行扩充，如boolean类型
+                            }
+                            parameterValues[i] = parameterObj;
+                        }
+                    }
                     //方法调用
                     method.setAccessible(true);
-                    Object obj = method.invoke(controller, req);
+                    Object obj = method.invoke(controller, parameterValues);
                     //视图处理
-                    String methodReturnStr=(String)obj;
-                    if(methodReturnStr.startsWith("redirect:")){
+                    String methodReturnStr = (String) obj;
+                    if (methodReturnStr.startsWith("redirect:")) {
                         String redirectStr = methodReturnStr.substring("redirect:".length());
                         resp.sendRedirect(redirectStr);
-                    }else {
-                        super.processTemplate(methodReturnStr,req,resp);
+                    } else {
+                        super.processTemplate(methodReturnStr, req, resp);
                     }
-                }else {
-                    throw new RuntimeException(operate+"operate值异常");
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {

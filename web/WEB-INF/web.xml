@@ -3,6 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+
     <!--
     1.用户发送请求，action=add
     2.项目中，web.xml中找到url-pattern=/add
@@ -35,6 +41,10 @@
     <servlet>
         <servlet-name>demo</servlet-name>
         <servlet-class>com.zhuweihao.servlets.demo</servlet-class>
+        <init-param>
+            <param-name>hello</param-name>
+            <param-value>world</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
