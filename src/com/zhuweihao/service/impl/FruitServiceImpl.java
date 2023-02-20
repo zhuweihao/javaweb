@@ -1,7 +1,6 @@
 package com.zhuweihao.service.impl;
 
 import com.zhuweihao.dao.FruitDAO;
-import com.zhuweihao.dao.impl.FruitDAOImpl;
 import com.zhuweihao.pojo.Fruit;
 import com.zhuweihao.service.FruitService;
 import com.zhuweihao.utils.JDBCUtils;
@@ -15,7 +14,7 @@ import java.util.List;
  * @Description com.zhuweihao.service.impl
  */
 public class FruitServiceImpl implements FruitService {
-    private FruitDAO fruitDAO=new FruitDAOImpl();
+    private FruitDAO fruitDAO=null;
 
     private Connection connection= JDBCUtils.getConnection();
 

@@ -1,11 +1,8 @@
 package com.zhuweihao.controllers;
 
-import com.zhuweihao.dao.impl.FruitDAOImpl;
 import com.zhuweihao.pojo.Fruit;
 import com.zhuweihao.service.FruitService;
-import com.zhuweihao.service.impl.FruitServiceImpl;
 import com.zhuweihao.utils.JDBCUtils;
-import com.zhuweihao.utils.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,18 +15,17 @@ import java.util.List;
  * @Description com.zhuweihao.controllers
  */
 public class FruitController {
-    private FruitService fruitService=new FruitServiceImpl();
+    private FruitService fruitService = null;
 
 
-    private String index(HttpServletRequest req,Integer page) {
+    private String index(HttpServletRequest req, Integer page) {
         //默认当前为第一页
         Integer pageNo = 1;
         //获取当前页
-        if (page!=null) {
+        if (page != null) {
             pageNo = page;
         }
         HttpSession session = req.getSession();
-        Connection connection = JDBCUtils.getConnection();
         //获取总页数
         Integer pageCount = fruitService.getPageCount();
         session.setAttribute("pageCount", pageCount);
@@ -56,7 +52,7 @@ public class FruitController {
         return "index";
     }
 
-    private String add(HttpServletRequest req,String fname,Integer price,Integer fcount,String remark) {
+    private String add(HttpServletRequest req, String fname, Integer price, Integer fcount, String remark) {
         Connection connection = JDBCUtils.getConnection();
         fruitService.insert(new Fruit(0, fname, price, fcount, remark));
 
@@ -64,20 +60,20 @@ public class FruitController {
     }
 
     private String del(Integer fid) {
-        if (fid!=null) {
+        if (fid != null) {
             fruitService.delFruit(fid);
             return "redirect:fruit.do";
         }
         return "error";
     }
 
-    private String update(Integer fid,String fname,Integer price,Integer fcount,String remark) {
+    private String update(Integer fid, String fname, Integer price, Integer fcount, String remark) {
         fruitService.updateFruit(new Fruit(fid, fname, price, fcount, remark));
         //重定向，获取最新的库存信息
         return "redirect:fruit.do";
     }
 
-    private String search(HttpServletRequest req,String keyword) {
+    private String search(HttpServletRequest req, String keyword) {
         List<Fruit> fruitListByFname = fruitService.getFruitListByFname(keyword);
         HttpSession session = req.getSession();
         session.setAttribute("fruitList", fruitListByFname);
@@ -85,8 +81,8 @@ public class FruitController {
         return "search";
     }
 
-    private String edit(HttpServletRequest req ,Integer fid) {
-        if (fid!=null) {
+    private String edit(HttpServletRequest req, Integer fid) {
+        if (fid != null) {
             Connection connection = JDBCUtils.getConnection();
             Fruit fruitById = fruitService.getFruitByFid(fid);
             HttpSession session = req.getSession();
